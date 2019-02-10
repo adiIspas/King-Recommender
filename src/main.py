@@ -1,7 +1,11 @@
 import logging
+import os
 
 from src.preparation.csv_reader import read_ratings
 from src.preparation.data import split_data, interactions_list_to_sparse_matrix
+
+# this is set to use CPU instead of GPU -> CUDA driver problem
+os.environ['CUDA_VISIBLE_DEVICES'] = ''
 
 logging.getLogger().setLevel(logging.INFO)
 
