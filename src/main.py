@@ -5,29 +5,61 @@ import numpy
 import tensorrec
 from scipy import sparse
 
-from src.preparation.csv_reader import read_ratings, read_genres
-from src.preparation.data import split_data, interactions_list_to_sparse_matrix
+from src.modeling.recommender import KingRecommender
+from src.preparation.csv_reader import read_ratings, read_genres, create_internal_ids
+from src.processing.data import create_test_train_interactions
 
 # this is set to use CPU instead of GPU -> CUDA driver problem
 os.environ['CUDA_VISIBLE_DEVICES'] = ''
-
 logging.getLogger().setLevel(logging.INFO)
 
-file_path_ratings = "../data/raw/ml-latest-small/dataset/ratings.csv"
-file_path_metadata = "../data/raw/ml-latest-small/dataset/movies.csv"
-raw_ratings, n_users, n_items, movielens_to_internal_item_ids = read_ratings(file_path_ratings)
+# define file paths
+file_ratings = 'ratings.csv'
+file_movies = 'movies.csv'
+dataset_path = '../data/raw/ml-latest-small/dataset/'
 
-train_ratings, test_ratings = split_data(raw_ratings, train_size=0.8)
+# create model and add useful information
+recommender = KingRecommender(dataset_path)
 
-sparse_train_ratings = interactions_list_to_sparse_matrix(train_ratings, n_users, n_items)
-sparse_test_ratings = interactions_list_to_sparse_matrix(test_ratings, n_users, n_items)
+# define dataset keys
+ratings = 'ratings'
+movies = 'movies'
 
-sparse_train_ratings_4plus = sparse_train_ratings.multiply(sparse_train_ratings >= 4.0)
-sparse_test_ratings_4plus = sparse_test_ratings.multiply(sparse_test_ratings >= 4.0)
+# add dataset file paths for each file
+recommender.add_dataset_file_path(ratings, file_ratings)
+recommender.add_dataset_file_path(movies, file_movies)
+
+# create internal ids for users and items
+ratings_file = recommender.get_dataset_file_path(ratings)
+internal_user_ids, internal_item_ids = create_internal_ids(ratings_file)
+
+recommender.add_internal_user_ids(internal_user_ids)
+recommender.add_internal_item_ids(internal_item_ids)
+
+# read and add dataset to model
+raw_ratings = read_ratings(ratings_file, internal_user_ids, internal_item_ids)
+recommender.add_dataset_entry(ratings, raw_ratings)
+
+sparse_train_ratings_4plus, sparse_test_ratings_4plus = \
+    create_test_train_interactions(raw_ratings, recommender.n_users, recommender.n_items)
+
+recommender.add_interactions(sparse_train_ratings_4plus)
+recommender.add_test_interactions(sparse_train_ratings_4plus)
+
+# train_ratings, test_ratings = split_data(raw_ratings, train_size=0.8)
+#
+# sparse_train_ratings = interactions_list_to_sparse_matrix(train_ratings, n_users, n_items)
+# sparse_test_ratings = interactions_list_to_sparse_matrix(test_ratings, n_users, n_items)
+#
+# sparse_train_ratings_4plus = sparse_train_ratings.multiply(sparse_train_ratings >= 4.0)
+# sparse_test_ratings_4plus = sparse_test_ratings.multiply(sparse_test_ratings >= 4.0)
 
 # Construct indicator features for users and items
-user_indicator_features = sparse.identity(n_users)
-item_indicator_features = sparse.identity(n_items)
+# user_indicator_features = sparse.identity(n_users)
+# item_indicator_features = sparse.identity(n_items)
+
+
+# === IS DONE === #
 
 movie_genre_features, n_genres, movie_titles_by_internal_id = read_genres(file_path_metadata,
                                                                           movielens_to_internal_item_ids=movielens_to_internal_item_ids)

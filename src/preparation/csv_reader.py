@@ -6,7 +6,25 @@ from scipy import sparse
 from sklearn.preprocessing import MultiLabelBinarizer
 
 
-def read_ratings(file_path):
+def create_internal_ids(file_path):
+    logging.info('Creating internal ids ...')
+
+    with open(file_path, 'r') as file:
+        file_reader = csv.reader(file)
+        raw_file = list(file_reader)
+        raw_file.pop(0)  # remove header
+
+    internal_user_ids = defaultdict(lambda: len(internal_user_ids))
+    internal_item_ids = defaultdict(lambda: len(internal_item_ids))
+
+    for row in raw_file:
+        internal_user_ids[int(row[0])]
+        internal_item_ids[int(row[1])]
+
+    return internal_user_ids, internal_item_ids
+
+
+def read_ratings(file_path, internal_user_ids, internal_item_ids):
     logging.info("Loading ratings ...")
 
     with open(file_path, 'r') as ratings_file:
@@ -14,18 +32,12 @@ def read_ratings(file_path):
         raw_ratings = list(ratings_file_reader)
         raw_ratings.pop(0)  # remove header
 
-    movielens_to_internal_user_ids = defaultdict(lambda: len(movielens_to_internal_user_ids))
-    movielens_to_internal_item_ids = defaultdict(lambda: len(movielens_to_internal_item_ids))
-
     for row in raw_ratings:
-        row[0] = movielens_to_internal_user_ids[int(row[0])]
-        row[1] = movielens_to_internal_item_ids[int(row[1])]
+        row[0] = internal_user_ids[int(row[0])]
+        row[1] = internal_item_ids[int(row[1])]
         row[2] = float(row[2])
 
-    n_users = len(movielens_to_internal_user_ids)
-    n_items = len(movielens_to_internal_item_ids)
-
-    return raw_ratings, n_users, n_items, movielens_to_internal_item_ids
+    return raw_ratings
 
 
 def read_genres(file_path, movielens_to_internal_item_ids):
