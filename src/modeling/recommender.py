@@ -1,3 +1,5 @@
+import tensorrec
+
 from scipy import sparse
 
 
@@ -19,6 +21,32 @@ class KingRecommender(object):
         self.test_interactions = None
 
         self.dataset = {}
+
+        self.model = tensorrec.TensorRec(n_components=5, loss_graph=tensorrec.loss_graphs.WMRBLossGraph())
+        self.ranks = None
+
+    def fit(self, epochs=300):
+        self.model.fit(interactions=self.interactions,
+                       user_features=self.user_features,
+                       item_features=self.item_features,
+                       n_sampled_items=int(self.n_items * .01),
+                       epochs=epochs,
+                       verbose=True)
+
+    def check_results(self):
+        self.ranks = self.model.predict_rank(user_features=self.user_features, item_features=self.item_features)
+
+        train_recall_at_10 = tensorrec.eval.recall_at_k(
+            test_interactions=self.interactions,
+            predicted_ranks=self.ranks,
+            k=10).mean()
+        test_recall_at_10 = tensorrec.eval.recall_at_k(
+            test_interactions=self.test_interactions,
+            predicted_ranks=self.ranks,
+            k=10).mean()
+
+        print("=== Recall at 10: Train: {:.4f} Test: {:.4f} ==="
+              .format(train_recall_at_10 * 100, test_recall_at_10 * 100))
 
     def add_dataset_file_path(self, file_key, file_name):
         self.dataset_file_path[file_key] = self.dataset_base_path + file_name

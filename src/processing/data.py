@@ -2,6 +2,7 @@ import logging
 
 from scipy import sparse
 from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import MultiLabelBinarizer
 
 
 def split_data(data, train_size=0.8):
@@ -25,3 +26,17 @@ def create_test_train_interactions(data, n_users, n_items, train_size=0.8, min_r
     sparse_test_ratings_4plus = sparse_test_ratings.multiply(sparse_test_ratings >= min_rating)
 
     return sparse_train_ratings_4plus, sparse_test_ratings_4plus
+
+
+def create_genres_features(movie_genres_by_internal_id, n_items):
+    # Build a list of genres where the index is the internal movie ID and
+    # the value is a list of [Genre, Genre, ...]
+    movie_genres = [movie_genres_by_internal_id[internal_id] for internal_id in range(n_items)]
+
+    # Transform the genres into binarized labels using scikit's MultiLabelBinarizer
+    movie_genre_features = MultiLabelBinarizer().fit_transform(movie_genres)
+
+    # Coerce the movie genre features to a sparse matrix, which TensorRec expects
+    movie_genre_features = sparse.coo_matrix(movie_genre_features)
+
+    return movie_genre_features
