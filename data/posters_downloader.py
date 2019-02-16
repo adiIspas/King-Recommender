@@ -6,6 +6,8 @@ import requests
 from bs4 import BeautifulSoup
 
 tmdb_url_template = 'https://www.themoviedb.org/movie/${ID}/images/posters?image_language=en'
+tmdb_url_template_no_language = 'https://www.themoviedb.org/movie/${ID}/images/posters?image_language=xx'
+
 logging.getLogger().setLevel(logging.INFO)
 
 
@@ -22,6 +24,12 @@ def get_tmdb_posters(dataset_path, ids):
         soup = BeautifulSoup(page, 'html.parser')
 
         posters_ulr = soup.findAll('img', {"class": "poster"})
+        if len(posters_ulr) == 1:
+            current_url = tmdb_url_template_no_language.replace("${ID}", str(url_movie_id))
+            page = request.urlopen(current_url)
+            soup = BeautifulSoup(page, 'html.parser')
+
+            posters_ulr = soup.findAll('img', {"class": "poster"})
 
         index = 1
         for url in posters_ulr:
