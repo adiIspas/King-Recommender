@@ -56,3 +56,20 @@ def read_genres(file_path, internal_item_ids):
         movie_genres_by_internal_id[row[0]] = row[2]
 
     return movie_titles_by_internal_id, movie_genres_by_internal_id
+
+
+def read_tmdb_links(file_path, internal_item_ids):
+    logging.info("Loading ratings ...")
+
+    movies_url_ids_by_internal_id = {}
+
+    with open(file_path, 'r') as ratings_file:
+        links_file_reader = csv.reader(ratings_file)
+        raw_links = list(links_file_reader)
+        raw_links.pop(0)  # remove header
+
+    for row in raw_links:
+        row[0] = internal_item_ids[int(row[0])]
+        movies_url_ids_by_internal_id.update({row[0]: row[2]})
+
+    return movies_url_ids_by_internal_id

@@ -3,8 +3,9 @@ import os
 
 from scipy import sparse
 
+from data.posters_downloader import get_tmdb_posters
 from src.modeling.recommender import KingRecommender
-from src.preparation.csv_reader import read_ratings, read_genres, create_internal_ids
+from src.preparation.csv_reader import read_ratings, read_genres, create_internal_ids, read_tmdb_links
 from src.processing.data import create_test_train_interactions, create_genres_features
 
 # this is set to use CPU instead of GPU -> CUDA driver problem
@@ -21,6 +22,11 @@ dataset_path = '../data/raw/ml-latest-small/dataset/'
 ratings = 'ratings'
 movies = 'movies'
 links = 'links'
+posters = 'posters'
+
+# define other params
+epochs = 300
+k = 10
 
 # read and prepare dataset
 internal_user_ids, internal_item_ids = create_internal_ids(dataset_path + file_ratings)
@@ -39,10 +45,14 @@ movie_genre_features = create_genres_features(movie_genres_by_internal_id, n_ite
 user_features = sparse.identity(n_users)
 full_item_features = sparse.hstack([sparse.identity(n_items), movie_genre_features])
 
+# just to download posters
+movies_url_ids_by_internal_id = read_tmdb_links(dataset_path + file_links, internal_item_ids)
+get_tmdb_posters(dataset_path + posters + "/", movies_url_ids_by_internal_id)
+
 # create a King Recommender model
 recommender = KingRecommender(user_features, full_item_features, sparse_train_ratings_4plus, sparse_test_ratings_4plus)
 
 # let's run :)
-recommender.fit(10)
-recommender.recall_at_k()
-recommender.recommend_for_user(432, movie_titles_by_internal_id, 5)
+recommender.fit(epochs)
+recommender.recall_at_k(k)
+recommender.recommend_for_user(432, movie_titles_by_internal_id, k)
