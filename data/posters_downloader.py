@@ -17,7 +17,12 @@ def get_tmdb_posters(dataset_path, ids):
 
     for internal_movie_id, url_movie_id in ids.items():
         movie_path = dataset_path + str(internal_movie_id) + "/"
-        os.makedirs(movie_path)
+
+        if os.path.exists(movie_path) and len(os.listdir(movie_path)) > 0:
+            current_processed = current_processed + 1
+            continue
+
+        os.makedirs(movie_path, exist_ok=True)
 
         current_url = tmdb_url_template.replace("${ID}", str(url_movie_id))
         page = request.urlopen(current_url)
