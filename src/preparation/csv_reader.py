@@ -40,8 +40,6 @@ def read_ratings(file_path, internal_user_ids, internal_item_ids):
 def read_genres(file_path, internal_item_ids):
     logging.info("Loading generes ...")
 
-    n_items = len(internal_item_ids)
-
     with open(file_path, 'r') as genres_file:
         genres_file_reader = csv.reader(genres_file)
         raw_genres = list(genres_file_reader)
