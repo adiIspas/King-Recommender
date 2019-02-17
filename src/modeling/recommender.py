@@ -49,6 +49,7 @@ class KingRecommender(object):
                                              item_features=item_features)[0]
 
         u_top_k_recs = numpy.where(u_rankings <= k)[0]
+        u_top_k_recs = sorted(u_top_k_recs, reverse=True)
         print("User {0} recommendations:".format(user_id))
         for m in u_top_k_recs:
             print("{0}".format(titles[m]))

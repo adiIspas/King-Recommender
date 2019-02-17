@@ -73,4 +73,4 @@ plt.xlabel('Precision/Recall at K')
 plt.legend()
 plt.show()
 
-recommender.recommend_for_user(432, movie_titles_by_internal_id, user_features, item_features, k)
+recommender.recommend_for_user(600, movie_titles_by_internal_id, user_features, item_features, k)
