@@ -6,6 +6,7 @@ from scipy import sparse
 from data.posters_downloader import get_tmdb_posters
 from src.modeling.recommender import KingRecommender
 from src.preparation.csv_reader import read_ratings, read_genres, create_internal_ids, read_tmdb_links
+from src.preparation.csv_writer import save_internal_item_id_to_page_id
 from src.processing.data import create_test_train_interactions, create_genres_features
 
 # this is set to use CPU instead of GPU -> CUDA driver problem
@@ -16,6 +17,7 @@ logging.getLogger().setLevel(logging.INFO)
 file_ratings = 'ratings.csv'
 file_movies = 'movies.csv'
 file_links = 'links.csv'
+item_id_page_id = 'item_page_id.csv'
 dataset_path = '../data/raw/ml-latest-small/dataset/'
 
 # define dataset keys
@@ -47,6 +49,7 @@ full_item_features = sparse.hstack([sparse.identity(n_items), movie_genre_featur
 
 # just to download posters
 movies_url_ids_by_internal_id = read_tmdb_links(dataset_path + file_links, internal_item_ids)
+save_internal_item_id_to_page_id(movies_url_ids_by_internal_id, dataset_path + item_id_page_id)
 get_tmdb_posters(dataset_path + posters + "/", movies_url_ids_by_internal_id)
 
 # create a King Recommender model

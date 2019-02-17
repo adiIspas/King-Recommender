@@ -43,19 +43,22 @@ def get_tmdb_posters(dataset_path, ids):
             posters_ulr = soup.findAll('img', {"class": "poster"})
 
         index = 1
+        images_data = []
         for url in posters_ulr:
             logging.info('Process movie with id %s and poster number %s', internal_movie_id, index)
 
             if url.get('data-src'):
                 try:
-                    img_data = requests.get(url['data-src']).content
+                    images_data.append(requests.get(url['data-src']).content)
                 except:
                     exceptions = exceptions + 1
                     continue
 
-                with open(movie_path + str(index) + '.jpg', 'wb') as handler:
-                    handler.write(img_data)
-                index = index + 1
+            index = index + 1
+
+        for img_data in images_data:
+            with open(movie_path + str(index) + '.jpg', 'wb') as handler:
+                handler.write(img_data)
 
         logging.info('Current progress: %s%% processed', round((current_processed / total_to_process) * 100, 2))
         current_processed = current_processed + 1
