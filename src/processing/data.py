@@ -16,7 +16,7 @@ def interactions_list_to_sparse_matrix(interactions, n_users, n_items):
     return sparse.coo_matrix((ratings_column, (users_column, items_column)), shape=(n_users, n_items))
 
 
-def create_test_train_interactions(data, n_users, n_items, train_size=0.8, min_rating=4.0):
+def create_test_train_interactions(data, n_users, n_items, train_size=0.8, min_rating=4.5):
     train_data, test_data = split_data(data, train_size=train_size)
 
     sparse_train_ratings = interactions_list_to_sparse_matrix(train_data, n_users, n_items)
