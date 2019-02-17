@@ -29,16 +29,18 @@ class KingRecommender(object):
         recall_at_k = tensorrec.eval.recall_at_k(test_interactions=interactions,
                                                  predicted_ranks=ranks, k=k).mean()
 
-        print("=== Recall at {0}: {1}% ===".format(k, round(recall_at_k * 100, 2)))
+        print("=== Recall at {0}: {1}% ===".format(k, round(recall_at_k, 2)))
+        return round(recall_at_k, 2)
 
     def precision_at_k(self, user_features, item_features, interactions, k=10):
         logging.info('Calculate precision at %s ...', k)
 
         ranks = self.model.predict_rank(user_features=user_features, item_features=item_features)
-        recall_at_k = tensorrec.eval.precision_at_k(test_interactions=interactions,
-                                                    predicted_ranks=ranks, k=k).mean()
+        precision_at_k = tensorrec.eval.precision_at_k(test_interactions=interactions,
+                                                       predicted_ranks=ranks, k=k).mean()
 
-        print("=== Precision at {0}: {1}% ===".format(k, round(recall_at_k * 100, 2)))
+        print("=== Precision at {0}: {1}% ===".format(k, round(precision_at_k, 2)))
+        return round(precision_at_k, 2)
 
     def recommend_for_user(self, user_id, titles, user_features, item_features, k=10):
         u_features = sparse.csr_matrix(user_features)[user_id]

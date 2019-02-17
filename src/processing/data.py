@@ -12,6 +12,7 @@ def split_data(data, train_size=0.8):
 
 def interactions_list_to_sparse_matrix(interactions, n_users, n_items):
     logging.info("Create sparse matrix for %s users and %s items", n_users, n_items)
+
     users_column, items_column, ratings_column, _ = zip(*interactions)
     return sparse.coo_matrix((ratings_column, (users_column, items_column)), shape=(n_users, n_items))
 
@@ -22,21 +23,16 @@ def create_test_train_interactions(data, n_users, n_items, train_size=0.8, min_r
     sparse_train_ratings = interactions_list_to_sparse_matrix(train_data, n_users, n_items)
     sparse_test_ratings = interactions_list_to_sparse_matrix(test_data, n_users, n_items)
 
-    sparse_train_ratings_4plus = sparse_train_ratings.multiply(sparse_train_ratings >= min_rating)
-    sparse_test_ratings_4plus = sparse_test_ratings.multiply(sparse_test_ratings >= min_rating)
+    sparse_train_ratings_plus = sparse_train_ratings.multiply(sparse_train_ratings >= min_rating)
+    sparse_test_ratings_plus = sparse_test_ratings.multiply(sparse_test_ratings >= min_rating)
 
-    return sparse_train_ratings_4plus, sparse_test_ratings_4plus
+    return sparse_train_ratings_plus, sparse_test_ratings_plus
 
 
 def create_genres_features(movie_genres_by_internal_id, n_items):
-    # Build a list of genres where the index is the internal movie ID and
-    # the value is a list of [Genre, Genre, ...]
     movie_genres = [movie_genres_by_internal_id[internal_id] for internal_id in range(n_items)]
 
-    # Transform the genres into binarized labels using scikit's MultiLabelBinarizer
     movie_genre_features = MultiLabelBinarizer().fit_transform(movie_genres)
-
-    # Coerce the movie genre features to a sparse matrix, which TensorRec expects
     movie_genre_features = sparse.coo_matrix(movie_genre_features)
 
     return movie_genre_features
