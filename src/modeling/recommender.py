@@ -10,8 +10,8 @@ class KingRecommender(object):
     def __init__(self, n_components=10,
                  user_repr_graph=tensorrec.representation_graphs.NormalizedLinearRepresentationGraph(),
                  item_repr_graph=tensorrec.representation_graphs.NormalizedLinearRepresentationGraph(),
-                 prediction_graph=tensorrec.prediction_graphs.EuclideanSimilarityPredictionGraph(),
-                 loss_graph=tensorrec.loss_graphs.RMSEDenseLossGraph()):
+                 prediction_graph=tensorrec.prediction_graphs.DotProductPredictionGraph(),
+                 loss_graph=tensorrec.loss_graphs.BalancedWMRBLossGraph()):
         self.model = tensorrec.TensorRec(n_components=n_components, user_repr_graph=user_repr_graph,
                                          item_repr_graph=item_repr_graph, prediction_graph=prediction_graph,
                                          loss_graph=loss_graph)
@@ -29,7 +29,7 @@ class KingRecommender(object):
         recall_at_k = tensorrec.eval.recall_at_k(test_interactions=interactions,
                                                  predicted_ranks=ranks, k=k).mean()
 
-        print("=== Recall at {0}: {1}% ===".format(k, round(recall_at_k, 2)))
+        print("=== Recall at {0}: {1} ===".format(k, round(recall_at_k, 2)))
         return round(recall_at_k, 2)
 
     def precision_at_k(self, user_features, item_features, interactions, k=10):
@@ -39,7 +39,7 @@ class KingRecommender(object):
         precision_at_k = tensorrec.eval.precision_at_k(test_interactions=interactions,
                                                        predicted_ranks=ranks, k=k).mean()
 
-        print("=== Precision at {0}: {1}% ===".format(k, round(precision_at_k, 2)))
+        print("=== Precision at {0}: {1} ===".format(k, round(precision_at_k, 2)))
         return round(precision_at_k, 2)
 
     def recommend_for_user(self, user_id, titles, user_features, item_features, k=10):
