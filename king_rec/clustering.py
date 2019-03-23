@@ -3,34 +3,31 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from sklearn import metrics
+from keras.layers import Input
 from sklearn.cluster import KMeans
 from keras.preprocessing import image
 from keras.applications.vgg16 import VGG16
 from keras.applications.vgg19 import VGG19
 from keras.applications.inception_v3 import InceptionV3
 from keras.applications.resnet50 import ResNet50
+from keras.applications.nasnet import NASNetLarge
 from keras.applications.imagenet_utils import preprocess_input
 
 models = [VGG16(weights='imagenet', include_top=False), VGG19(weights='imagenet', include_top=False),
-          InceptionV3(weights='imagenet', include_top=False), ResNet50(weights='imagenet', include_top=False)]
+          InceptionV3(weights='imagenet', include_top=False), ResNet50(weights='imagenet', include_top=False),
+          NASNetLarge(weights='imagenet', include_top=False, input_tensor=Input(shape=(224, 224, 3)))]
 
 clusters = range(2, 20, 2)
 models_results = dict()
-colors = ['r', 'y', 'b', 'g']
+colors = ['r', 'y', 'b', 'g', 'c']
 
-
-class ModelResult(object):
-    def __init__(self, model_name, model_result):
-        self.name = model_name
-        self.result = model_result
-
+dataset = '../dataset/ml-latest-small/images/'
+subdir = [dataset + str(movie) + '/posters/' for movie in range(1, 2, 1)]
 
 for model in models:
     feature_list = []
 
-    subdir = ['captain_marvel', 'triple_frontier', 'the_notebook', 'inception']
     for idx, dirname in enumerate(subdir):
-
         filenames = os.listdir(dirname)
         for i, file_name in enumerate(filenames):
             img = image.load_img(dirname + '/' + file_name, target_size=(224, 224))
@@ -61,7 +58,7 @@ for model in models:
 n_groups = len(list(clusters))
 fig = plt.subplots()
 index = np.arange(n_groups)
-bar_width = 0.2
+bar_width = 0.15
 current_index = 0
 
 for key, values in models_results.items():
