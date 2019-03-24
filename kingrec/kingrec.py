@@ -9,10 +9,4 @@ class KingRec(object):
         self.loss = loss
         self.learning_rate = learning_rate
 
-        self.model = LightFM(learning_rate=learning_rate, loss=loss)
-
-    def fit(self, interactions, user_features=None, item_features=None,
-            sample_weight=None, epochs=1, num_threads=1, verbose=False):
-
-        self.model.fit(interactions, user_features=user_features, item_features=item_features,
-                       sample_weight=sample_weight, epochs=epochs, num_threads=num_threads, verbose=verbose)
+        self.model = LightFM(no_components=no_components, learning_rate=learning_rate, loss=loss)
