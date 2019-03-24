@@ -61,7 +61,7 @@ def download_images(tmdb_api_key, tmdb_movies_id, max_movie_index=10):
                             image_idx += 1
 
             else:
-                print('Status code:', response.status_code, 'on movie', value)
+                print('Status code:', response.status_code, 'on movie', key, '-', value)
 
         if movie_index == max_movie_index:
             break

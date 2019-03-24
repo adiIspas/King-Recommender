@@ -9,4 +9,4 @@ class KingRec(object):
         self.loss = loss
         self.learning_rate = learning_rate
 
-        self.model = LightFM(no_components=no_components, learning_rate=learning_rate, loss=loss)
+        self.model = LightFM(no_components=no_components, learning_rate=learning_rate, loss=loss, random_state=7)
