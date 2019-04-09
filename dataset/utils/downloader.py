@@ -6,7 +6,7 @@ import urllib.request
 
 api_key = sys.argv[1]
 
-dataset = '../ml-latest-small/'
+dataset = '../../king-rec-dataset/ml-latest-small/'
 tmdb_api = 'https://api.themoviedb.org/3/movie/$MOVIE_ID/images?include_image_language=en,null&api_key=$API_KEY'
 tmdb_images_url = 'https://image.tmdb.org/t/p/original/'
 

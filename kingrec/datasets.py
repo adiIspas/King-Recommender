@@ -26,7 +26,7 @@ def init_movielens(path):
 
         users = list(users)
         items = list(items)
-        ratings_train, ratings_test = train_test_split(ratings, test_size=0.3)
+        ratings_train, ratings_test = train_test_split(ratings, test_size=0.2)
 
         train_dataset.fit(users=users, items=items)
         test_dataset.fit(users=users, items=items)

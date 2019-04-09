@@ -5,10 +5,10 @@ from kingrec.evaluation import auc_score
 from kingrec.datasets import init_movielens
 from lightfm.datasets import fetch_movielens
 
-init_movielens('./dataset/ml-latest-small')
+dataset = '../king-rec-dataset/ml-latest-small'
 
 # movielens = fetch_movielens(genre_features=True)
-movielens = init_movielens('./dataset/ml-latest-small')
+movielens = init_movielens(dataset)
 
 train = movielens['train']
 test = movielens['test']
