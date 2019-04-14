@@ -40,11 +40,11 @@ def explore_clusters():
     colors = ['r', 'y', 'b', 'g', 'c']
 
     print('Reading data ...')
-    feature_list = pd.read_csv('./vgg19.csv', header=None)
+    feature_list = np.loadtxt('./vgg19.csv', delimiter=',')
     print('Complete read data.')
 
-    movie_poster_clusters = feature_list.loc[:, :1]
-    feature_list = feature_list.loc[:, 2:]
+    movie_poster_clusters = pd.DataFrame(feature_list[:, :2])
+    feature_list = feature_list[:, 2:]
     feature_list_np = np.array(feature_list)
     for n_clusters in clusters:
         k_means = KMeans(n_clusters=n_clusters).fit(feature_list_np)
