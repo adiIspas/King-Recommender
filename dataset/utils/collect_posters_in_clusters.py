@@ -4,7 +4,7 @@ import csv
 import shutil
 
 dataset = '../../../king-rec-dataset/ml-latest-small/images/'
-number_of_clusters = 16
+number_of_clusters = 18
 clusters_dir = '../../../king-rec-dataset/ml-latest-small/results/clusters/' + str(number_of_clusters) + '/'
 
 
