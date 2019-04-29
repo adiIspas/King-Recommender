@@ -9,11 +9,13 @@ from sklearn.preprocessing import MultiLabelBinarizer
 __all__ = ['init_movielens']
 
 
-def init_movielens(path):
+def init_movielens(path, min_rating=0.0):
     train_dataset = Dataset()
     test_dataset = Dataset()
     data = dict()
     cluster_n = 16
+
+    min_interactions = dict()
 
     with open(path + '/ratings.csv', 'r') as ratings_file:
         reader = csv.reader(ratings_file, delimiter=',', )
@@ -23,13 +25,45 @@ def init_movielens(path):
         users = set()
         items = set()
         for row in reader:
-            users.add(int(row[0]))
-            items.add(int(row[1]))
-            ratings.append((int(row[0]), int(row[1]), float(row[2])))
+            user_id = int(row[0])
+            users.add(user_id)
+
+            item_id = int(row[1])
+            items.add(item_id)
+
+            rating = float(row[2])
+
+            if rating >= min_rating:
+                ratings.append((user_id, item_id, rating))
+
+                if user_id not in min_interactions:
+                    min_interactions.update({user_id: 1})
+                else:
+                    min_interactions.update({user_id: 1 + min_interactions.get(user_id)})
+
+        print('Minimum no of interactions between users and items overall:', min(min_interactions.values()))
 
         users = list(users)
         items = list(items)
-        ratings_train, ratings_test = train_test_split(ratings, test_size=0.2)
+        ratings_train, ratings_test = train_test_split(ratings, test_size=0.2, random_state=7)
+
+        min_interactions = dict()
+        for user_id, item_id, rating in ratings_train:
+            if user_id not in min_interactions:
+                min_interactions.update({user_id: 1})
+            else:
+                min_interactions.update({user_id: 1 + min_interactions.get(user_id)})
+
+        print('Minimum no of interactions between users and items on train:', min(min_interactions.values()))
+
+        min_interactions = dict()
+        for user_id, item_id, rating in ratings_test:
+            if user_id not in min_interactions:
+                min_interactions.update({user_id: 1})
+            else:
+                min_interactions.update({user_id: 1 + min_interactions.get(user_id)})
+
+        print('Minimum no of interactions between users and items on test:', min(min_interactions.values()))
 
         train_dataset.fit(users=users, items=items)
         test_dataset.fit(users=users, items=items)
@@ -50,10 +84,14 @@ def init_movielens(path):
     # add posters clusters as features
     movies_posters_clusters = __init_movies_posters_clusters(path, movie_genres.keys(), cluster_n)
     movies_posters_clusters_features = sparse.coo_matrix(list(movies_posters_clusters.values()))
+
     item_indicator_features = sparse.identity(len(movie_genres))
     item_features = sparse.hstack([item_indicator_features, movie_genre_features, movies_posters_clusters_features])
-
     data.update({'item_features': item_features})
+
+    user_indicator_features = sparse.identity(len(users))
+    user_features = sparse.hstack([user_indicator_features])
+    data.update({'user_features': user_features})
 
     return data
 
@@ -78,7 +116,7 @@ def __init_movies_genres(path):
 
 def __init_movies_posters_clusters(path, movie_ids, cluster_n):
     print('Init movies posters clusters ...')
-    movies_posters_clusters = pd.read_csv(path + '/movies_3_posters_clusters_vgg19.csv')
+    movies_posters_clusters = pd.read_csv(path + '/movies_1_poster_clusters_vgg19.csv')
 
     movie_clusters = dict()
     for movie_id in movie_ids:
