@@ -1,7 +1,6 @@
 import csv
 import pandas as pd
 import numpy as np
-import copy
 from scipy import sparse
 from lightfm.data import Dataset
 from lightfm.cross_validation import random_train_test_split
@@ -9,14 +8,19 @@ from lightfm.cross_validation import random_train_test_split
 __all__ = ['init_movielens']
 
 
-def init_movielens(path, min_rating=0.0, k=3):
+def init_movielens(path, min_rating=0.0, k=3, item_features=None, cluster_n=18):
+    valid_item_features = {'genres': 'genres', 'clusters': 'clusters'}
+    if item_features is not None:
+        assert all(item in valid_item_features.values() for item in item_features), \
+            'Your specified item features is invalid. You have to use one or more of this: ' \
+            + ', '.join(valid_item_features)
+
     train_dataset = Dataset()
     test_dataset = Dataset()
 
     data = dict()
-    cluster_n = 14
-
     min_interactions = dict()
+
     with open(path + '/ratings.csv', 'r') as ratings_file:
         reader = csv.reader(ratings_file, delimiter=',', )
         next(reader)  # skip header
@@ -45,7 +49,8 @@ def init_movielens(path, min_rating=0.0, k=3):
         users_column, items_column, ratings_column = zip(*ratings)
         ratings = sparse.coo_matrix((ratings_column, (users_column, items_column)))
 
-        ratings_train, ratings_test = random_train_test_split(ratings, test_percentage=0.2, random_state=np.random.RandomState(7))
+        ratings_train, ratings_test = random_train_test_split(ratings, test_percentage=0.2,
+                                                              random_state=np.random.RandomState(7))
 
         ratings_train_to_count = zip(ratings_train.row, ratings_train.col, ratings_train.data)
         ratings_train = zip(ratings_train.row, ratings_train.col, ratings_train.data)
@@ -68,24 +73,40 @@ def init_movielens(path, min_rating=0.0, k=3):
         data.update({'train': train_interactions})
         data.update({'test': test_interactions})
 
-    # add genres and posters clusters as features
-    movie_genres, genres = __init_movies_genres(path)
-    movies_posters_clusters, clusters = __init_movies_posters_clusters(path, cluster_n)
-    aggregated_features = __aggregate_features([movies_posters_clusters])
+    # add item features
+    if item_features is not None:
+        aggregated_features = []
 
-    train_dataset.fit_partial(item_features=genres)
-    train_dataset.fit_partial(item_features=clusters)
-    train_dataset.fit_partial(items=list(movie_genres.keys()))
-    item_features = train_dataset.build_item_features(((movie_id, aggregated_features.get(movie_id))
-                                                       for movie_id in aggregated_features.keys()))
+        if valid_item_features.get('genres') in item_features:
+            movie_genres, genres = __init_movies_genres(path)
+            aggregated_features.append(movie_genres)
 
-    test_dataset.fit_partial(item_features=genres)
-    test_dataset.fit_partial(item_features=clusters)
-    test_dataset.fit_partial(items=list(movie_genres.keys()))
-    _ = test_dataset.build_item_features(((movie_id, aggregated_features.get(movie_id))
-                                          for movie_id in aggregated_features.keys()))
+            train_dataset.fit_partial(item_features=genres)
+            test_dataset.fit_partial(item_features=genres)
 
-    data.update({'item_features': item_features})
+            train_dataset.fit_partial(items=list(movie_genres.keys()))
+            test_dataset.fit_partial(items=list(movie_genres.keys()))
+
+        if valid_item_features.get('clusters') in item_features:
+            movies_posters_clusters, clusters = __init_movies_posters_clusters(path, cluster_n)
+            aggregated_features.append(movies_posters_clusters)
+
+            train_dataset.fit_partial(item_features=clusters)
+            test_dataset.fit_partial(item_features=clusters)
+
+            train_dataset.fit_partial(items=list(movies_posters_clusters.keys()))
+            test_dataset.fit_partial(items=list(movies_posters_clusters.keys()))
+
+        aggregated_features = __aggregate_features(aggregated_features)
+        item_features = train_dataset.build_item_features(((movie_id, aggregated_features.get(movie_id))
+                                                           for movie_id in aggregated_features.keys()))
+
+        _ = test_dataset.build_item_features(((movie_id, aggregated_features.get(movie_id))
+                                              for movie_id in aggregated_features.keys()))
+
+        data.update({'item_features': item_features})
+    else:
+        data.update({'item_features': None})
 
     return data
 
