@@ -2,7 +2,8 @@ from kingrec import KingRec
 from kingrec.evaluation import precision_at_k
 from kingrec.evaluation import recall_at_k
 from kingrec.evaluation import auc_score
-from kingrec.datasets import init_movielens
+from kingrec.evaluation import reciprocal_rank
+from kingrec.dataset import init_movielens
 
 dataset = '../king-rec-dataset/ml-latest-small'
 
@@ -34,17 +35,16 @@ scaling = 0.0012546879899490554
 # alpha = 0.0014490168877726135
 # scaling = 0.07389666871280426
 
-k = 5
+k = 3
 threads = 16
 
-movielens = init_movielens(dataset, min_rating=3.5, k=k)
+movielens = init_movielens(dataset, min_rating=3.5, k=k, item_features=['clusters'])
 
 train = movielens['train']
 test = movielens['test']
 item_features = movielens['item_features']
-# item_features = None
 
-king_rec = KingRec(no_components=no_components, learning_rate=learning_rate, alpha=alpha, loss='warp')
+king_rec = KingRec(no_components=no_components, learning_rate=learning_rate, alpha=alpha, scale=scaling, loss='warp')
 
 model = king_rec.model
 model.fit_partial(train, item_features=item_features, epochs=epochs, verbose=True, num_threads=threads)
@@ -58,8 +58,12 @@ test_recall = recall_at_k(model, test, item_features=item_features, k=k, num_thr
 train_auc = auc_score(model, train, item_features=item_features, num_threads=threads).mean()
 test_auc = auc_score(model, test, item_features=item_features, num_threads=threads).mean()
 
+train_reciprocal = reciprocal_rank(model, train, item_features=item_features, num_threads=threads).mean()
+test_reciprocal = reciprocal_rank(model, test, item_features=item_features, num_threads=threads).mean()
+
 print('\nResults')
-print('Precision: train %.4f, test %.4f.' % (train_precision, test_precision))
-print('Recall: train %.4f, test %.4f.' % (train_recall, test_recall))
 print('AUC: train %.4f, test %.4f.' % (train_auc, test_auc))
+print('Recall: train %.4f, test %.4f.' % (train_recall, test_recall))
+print('Precision: train %.4f, test %.4f.' % (train_precision, test_precision))
+print('Reciprocal rank: train %.4f, test %.4f.' % (train_reciprocal, test_reciprocal))
 print('--------------------------------\n')

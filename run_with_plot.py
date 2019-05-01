@@ -2,7 +2,7 @@ from kingrec import KingRec
 from kingrec.evaluation import precision_at_k
 from kingrec.evaluation import recall_at_k
 from kingrec.evaluation import auc_score
-from kingrec.datasets import init_movielens
+from kingrec.dataset import init_movielens
 import matplotlib.pyplot as plt
 import numpy as np
 
