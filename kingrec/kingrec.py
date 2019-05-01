@@ -11,5 +11,5 @@ class KingRec(object):
         self.item_alpha = alpha
         self.user_alpha = alpha * scale
 
-        self.model = LightFM(no_components=no_components, learning_rate=learning_rate,
-                             loss=loss, item_alpha=self.item_alpha, user_alpha=self.user_alpha, random_state=2019)
+        self.model = LightFM(no_components=no_components, learning_rate=learning_rate, loss=loss,
+                             item_alpha=self.item_alpha, user_alpha=self.user_alpha, random_state=2019)
