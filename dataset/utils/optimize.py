@@ -14,7 +14,7 @@ k = 10
 
 
 def objective(params):
-    epochs, learning_rate, no_components, item_alpha, scale = params
+    epochs, learning_rate, no_components, item_alpha, scale = params  # 'k_os'
 
     user_alpha = item_alpha * scale
 
@@ -42,21 +42,23 @@ for features in [None, ['genres'], ['clusters'], ['genres', 'clusters']]:
     test = movielens['test']
     item_features = movielens['item_features']
 
-    for loss in ['bpr', 'warp']:
+    for loss in ['warp', 'bpr']:  # 'warp-kos'
         for function_to_optimize in [precision_at_k, auc_score]:
-            space = [(1, 2),  # epochs
+            space = [(1, 250),  # epochs
                      (10 ** -4, 1.0, 'log-uniform'),  # learning_rate
                      (20, 200),  # no_components
                      (10 ** -6, 10 ** -1, 'log-uniform'),  # item_alpha
                      (0.001, 1., 'log-uniform'),  # user_scaling
+                     # (1, 5),  # k for k-OS training
                      ]
 
-            current_fixed_params = '\n== Optimize with features: ' + str(features) + '   loss: ' + loss + \
+            current_fixed_params = '\n==> Optimize with features: ' + str(features) + '   loss: ' + loss + \
                                    '   function to optimize: ' + function_to_optimize.__name__ + ' ==='
             print(current_fixed_params)
             results.write('\n' + current_fixed_params)
+            results.flush()
 
-            res_fm = forest_minimize(objective, space, n_calls=10, random_state=7, verbose=True, n_jobs=-1)
+            res_fm = forest_minimize(objective, space, n_calls=250, random_state=7, verbose=True, n_jobs=-1)
 
             maximum_found = str('Maximum ' + function_to_optimize.__name__ + ' found: {:6.4f}'.format(-res_fm.fun))
             optimal_params = 'Optimal parameters:'
@@ -66,12 +68,15 @@ for features in [None, ['genres'], ['clusters'], ['genres', 'clusters']]:
 
             results.write('\n' + maximum_found)
             results.write('\n' + optimal_params)
+            results.flush()
 
-            params = ['epochs', 'learning_rate', 'no_components', 'item_alpha', 'scaling']
+            params = ['epochs', 'learning_rate', 'no_components', 'item_alpha', 'scaling']  # 'k_os'
             for (p, x_) in zip(params, res_fm.x):
                 params_values = str('{}: {}'.format(p, x_))
 
                 print(params_values)
                 results.write('\n' + params_values)
+
+            results.flush()
 
 results.close()
