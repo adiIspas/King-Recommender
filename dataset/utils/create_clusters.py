@@ -39,7 +39,6 @@ def explore_clusters():
     models_results = dict()
     colors = ['r', 'y', 'b', 'g', 'c']
 
-    # models = ['vgg16', 'vgg19', 'inception_v3', 'resnet50', 'NASNet']
     models = ['vgg16', 'vgg19', 'inception_v3', 'resnet50', 'NASNet']
 
     for model in models:
