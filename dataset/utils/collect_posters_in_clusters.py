@@ -4,12 +4,13 @@ import csv
 import shutil
 
 dataset = '../../../king-rec-dataset/ml-latest-small/images/'
-number_of_clusters = 18
-clusters_dir = '../../../king-rec-dataset/ml-latest-small/results/clusters/' + str(number_of_clusters) + '/'
+number_of_clusters = 7
+model = 'vgg16'
+clusters_dir = '../../../king-rec-dataset/ml-latest-small/results/clusters/sanity-check/' + model + '/' + str(number_of_clusters) + '/'
 
 
 def collect_posters():
-    data = pd.read_csv('fixed_all_movies_3_posters_clusters_vgg19.csv')
+    data = pd.read_csv('sanity_check_movies_1_poster_clusters_' + model + '.csv')
 
     # create directories
     for idx in range(1, number_of_clusters + 1):

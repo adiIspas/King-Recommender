@@ -35,36 +35,41 @@ def get_items_ids():
 
 
 def explore_clusters():
-    clusters = range(2, 22, 2)
+    clusters = range(2, 8, 1)
     models_results = dict()
     colors = ['r', 'y', 'b', 'g', 'c']
 
-    print('Reading data ...')
-    feature_list = np.loadtxt('./vgg19.csv', delimiter=',')
-    print('Complete read data.')
+    # models = ['vgg16', 'vgg19', 'inception_v3', 'resnet50', 'NASNet']
+    models = ['vgg16', 'vgg19', 'inception_v3', 'resnet50', 'NASNet']
 
-    movie_poster_clusters = pd.DataFrame(feature_list[:, :2])
-    feature_list = feature_list[:, 2:]
-    feature_list_np = np.array(feature_list)
-    for n_clusters in clusters:
-        k_means = KMeans(n_clusters=n_clusters).fit(feature_list_np)
+    for model in models:
+        print('Reading data ...')
+        feature_list = np.loadtxt('./' + model + '-100-posters.csv', delimiter=',')
+        # feature_list = feature_list[feature_list[:, 1] == 1]  # select just one poster per movie
+        print('Complete read data.')
 
-        name = 'vgg19'
-        result = metrics.silhouette_score(feature_list_np, k_means.labels_)
+        movie_poster_clusters = pd.DataFrame(feature_list[:, :2])
+        feature_list = feature_list[:, 2:]
+        feature_list_np = np.array(feature_list)
+        for n_clusters in clusters:
+            k_means = KMeans(n_clusters=n_clusters).fit(feature_list_np)
 
-        if name not in models_results:
-            results = []
-        else:
-            results = models_results.pop(name)
+            name = model
+            result = metrics.silhouette_score(feature_list_np, k_means.labels_)
 
-        cluster_name = 'cluster_' + str(n_clusters)
-        movie_poster_clusters[cluster_name] = pd.Series(k_means.labels_)
+            if name not in models_results:
+                results = []
+            else:
+                results = models_results.pop(name)
 
-        results.append(result)
-        models_results.update({name: results})
-        print('silhouette score on', name, 'with', n_clusters, 'clusters:', result)
+            cluster_name = 'cluster_' + str(n_clusters)
+            movie_poster_clusters[cluster_name] = pd.Series(k_means.labels_)
 
-    movie_poster_clusters.to_csv('all_movies_3_posters_clusters_vgg19.csv')
+            results.append(result)
+            models_results.update({name: results})
+            print('silhouette score on', name, 'with', n_clusters, 'clusters:', result)
+
+        movie_poster_clusters.to_csv('sanity_check_movies_1_poster_clusters_' + name + '.csv')
 
     n_groups = len(list(clusters))
     index = np.arange(n_groups)
@@ -88,7 +93,7 @@ def explore_clusters():
     plt.xticks(index + bar_width, list(clusters))
     plt.legend()
     plt.tight_layout()
-    plt.savefig('silhouette-3-posters-for-all-movies.jpg')
+    plt.savefig('silhouette-sanity-check.jpg')
     plt.show()
 
 
