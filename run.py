@@ -1,3 +1,7 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+from sklearn.metrics import auc
 from kingrec import KingRec
 from kingrec.evaluation import precision_at_k
 from kingrec.evaluation import recall_at_k
@@ -5,38 +9,22 @@ from kingrec.evaluation import auc_score
 from kingrec.evaluation import reciprocal_rank
 from kingrec.dataset import init_movielens
 
-dataset = '../king-rec-dataset/ml-latest-small'
 
-# without features
-# epochs = 254
-# learning_rate = 0.003757852437153106
-# no_components = 114
-# alpha = 0.06690348539114543
-# scaling = 0.001504707940775378
+def load_params(optimized_for='auc_clusters'):
+    if optimized_for == 'auc_clusters':
+        optimal_epochs = 100
+        optimal_learning_rate = 0.0570326091236193
+        optimal_no_components = 68
+        optimal_alpha = 0.0029503539747277366
+        optimal_scaling = 0.02563602355611453
 
-# genres
-# epochs = 158
-# learning_rate = 0.015453475642479833
-# no_components = 130
-# alpha = 0.0007855993801387813
-# scaling = 0.8403398223850091
+        return optimal_epochs, optimal_learning_rate, optimal_no_components, optimal_alpha, optimal_scaling
 
-# clusters
-epochs = 55
-learning_rate = 0.00992574866043483
-no_components = 196
-alpha = 1.4998416303979942e-05
-scaling = 0.0012546879899490554
-
-# clusters + genres
-# epochs = 183
-# learning_rate = 0.037082502295401325
-# no_components = 21
-# alpha = 0.0014490168877726135
-# scaling = 0.07389666871280426
 
 k = 3
 threads = 16
+dataset = '../king-rec-dataset/ml-latest-small'
+epochs, learning_rate, no_components, alpha, scaling = load_params(optimized_for='auc_clusters')
 
 movielens = init_movielens(dataset, min_rating=3.5, k=k, item_features=['clusters'])
 
@@ -67,3 +55,19 @@ print('Recall: train %.4f, test %.4f.' % (train_recall, test_recall))
 print('Precision: train %.4f, test %.4f.' % (train_precision, test_precision))
 print('Reciprocal rank: train %.4f, test %.4f.' % (train_reciprocal, test_reciprocal))
 print('--------------------------------\n')
+
+# precision/recall graph
+test_recall = recall_at_k(model, test, item_features=item_features, k=k, num_threads=threads)
+test_precision = precision_at_k(model, test, item_features=item_features, k=k, num_threads=threads)
+
+sorted_idx = test_recall.argsort()
+test_recall = test_recall[sorted_idx]
+
+test_precision = test_precision[sorted_idx]
+auc = np.round(auc(test_recall, test_precision), decimals=2)
+
+plt.title('AUC: ' + str(auc) + '%')
+plt.xlabel('Recall')
+plt.ylabel('Precision')
+plt.plot(test_recall, test_precision)
+plt.show()

@@ -8,20 +8,20 @@ import numpy as np
 
 dataset = '../king-rec-dataset/ml-latest-small'
 
-epochs = 100
-learning_rate = 0.00992574866043483
-no_components = 196
-alpha = 1.4998416303979942e-05
-scaling = 0.0012546879899490554
+epochs = 42
+learning_rate = 0.0570326091236193
+no_components = 68
+alpha = 0.0029503539747277366
+scaling = 0.02563602355611453
 k = 3
 
-movielens = init_movielens(dataset, min_rating=3.5, k=k)
+movielens = init_movielens(dataset, min_rating=3.5, k=k, item_features=['clusters'])
 
 train = movielens['train']
 test = movielens['test']
 item_features = movielens['item_features']
 
-king_rec = KingRec(no_components=no_components, learning_rate=learning_rate, alpha=alpha, loss='warp')
+king_rec = KingRec(no_components=no_components, learning_rate=learning_rate, alpha=alpha, scale=scaling, loss='warp')
 model = king_rec.model
 
 train_auc_scores = []
