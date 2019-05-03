@@ -21,7 +21,7 @@ def load_params(optimized_for='auc_clusters'):
         return optimal_epochs, optimal_learning_rate, optimal_no_components, optimal_alpha, optimal_scaling
 
 
-k = 3
+k = 5
 threads = 16
 dataset = '../king-rec-dataset/ml-latest-small'
 epochs, learning_rate, no_components, alpha, scaling = load_params(optimized_for='auc_clusters')
@@ -56,7 +56,7 @@ print('Precision: train %.4f, test %.4f.' % (train_precision, test_precision))
 print('Reciprocal rank: train %.4f, test %.4f.' % (train_reciprocal, test_reciprocal))
 print('--------------------------------\n')
 
-# precision/recall graph
+# plot precision/recall graph
 test_recall = recall_at_k(model, test, item_features=item_features, k=k, num_threads=threads)
 test_precision = precision_at_k(model, test, item_features=item_features, k=k, num_threads=threads)
 
@@ -70,4 +70,5 @@ plt.title('AUC: ' + str(auc) + '%')
 plt.xlabel('Recall')
 plt.ylabel('Precision')
 plt.plot(test_recall, test_precision)
+plt.savefig('precision-recall.jpg')
 plt.show()
