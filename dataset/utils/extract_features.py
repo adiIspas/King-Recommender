@@ -13,9 +13,9 @@ from keras.applications.nasnet import NASNetLarge
 from keras.applications.imagenet_utils import preprocess_input
 
 dataset = '../../../king-rec-dataset/ml-latest-small/'
-# base_path = 'images/'
-base_path = 'clusters_sanity_check/'
-max_posters_per_movie = 100
+base_path = 'images/'
+# base_path = 'clusters_sanity_check/'
+max_posters_per_movie = 1
 
 
 def get_int(filename):
@@ -36,8 +36,8 @@ def get_items_ids():
 
 
 def extract_images_features():
-    # movies = list(get_items_ids())
-    movies = [1, 3, 4, 5, 7, 19, 22, 23]
+    movies = list(get_items_ids())
+    # movies = [1, 3, 4, 5, 7, 19, 22, 23]
     subdir = [dataset + base_path + str(movie) + '/posters/' for movie in movies]
     models = [
               VGG16(weights='imagenet', include_top=False),

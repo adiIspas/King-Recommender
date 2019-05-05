@@ -5,14 +5,9 @@ import pandas as pd
 
 from sklearn import metrics
 from sklearn.cluster import KMeans
-# from sklearn.decomposition import PCA
+
 
 dataset = '../../../king-rec-dataset/ml-latest-small/'
-# pca_components = 5000
-# max_posters_per_movie = 3
-# max_movies_numbers = 5000
-# pca_reduction = True
-# n_rows = 300
 
 
 def get_items_ids():
@@ -28,14 +23,8 @@ def get_items_ids():
     return item_ids
 
 
-# def get_pca_features(features):
-#     features = np.array([feature for feature in features])
-#     pca = PCA(n_components=pca_components, whiten=True)
-#     return pca.fit_transform(features)
-
-
 def explore_clusters():
-    clusters = range(2, 8, 1)
+    clusters = range(2, 22, 2)
     models_results = dict()
     colors = ['r', 'y', 'b', 'g', 'c']
 
@@ -43,11 +32,11 @@ def explore_clusters():
 
     for model in models:
         print('Reading data ...')
-        feature_list = np.loadtxt('./' + model + '-100-posters.csv', delimiter=',')
-        # feature_list = feature_list[feature_list[:, 1] == 1]  # select just one poster per movie
+        feature_list = np.loadtxt('./posters_features/1000-movies/' + model + '1000-movies_1-posters.csv', delimiter=',')
         print('Complete read data.')
 
         movie_poster_clusters = pd.DataFrame(feature_list[:, :2])
+
         feature_list = feature_list[:, 2:]
         feature_list_np = np.array(feature_list)
         for n_clusters in clusters:
@@ -68,7 +57,7 @@ def explore_clusters():
             models_results.update({name: results})
             print('silhouette score on', name, 'with', n_clusters, 'clusters:', result)
 
-        movie_poster_clusters.to_csv('sanity_check_movies_1_poster_clusters_' + name + '.csv')
+        movie_poster_clusters.to_csv('movies_1_poster_clusters_' + name + '.csv')
 
     n_groups = len(list(clusters))
     index = np.arange(n_groups)
@@ -81,23 +70,14 @@ def explore_clusters():
                 label=key)
         current_index += 1
 
-    # if pca_reduction:
-    #     fig_name = "silhouette-" + str(max_movies_numbers) + "-" + str(max_posters_per_movie) + "-" + str(pca_components)
-    # else:
-    #     fig_name = "silhouette-" + str(max_movies_numbers) + "-" + str(max_posters_per_movie)
-
     plt.xlabel('Number of clusters')
     plt.ylabel('Silhouette score')
     plt.title('Silhouette score by model')
     plt.xticks(index + bar_width, list(clusters))
     plt.legend()
     plt.tight_layout()
-    plt.savefig('silhouette-sanity-check.jpg')
+    plt.savefig('silhouette-score.jpg')
     plt.show()
-
-
-def generate_posters_clusters():
-    movies = get_items_ids()
 
 
 def main():
