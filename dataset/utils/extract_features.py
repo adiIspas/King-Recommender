@@ -37,7 +37,6 @@ def get_items_ids():
 
 def extract_images_features():
     movies = list(get_items_ids())
-    # movies = [1, 3, 4, 5, 7, 19, 22, 23]
     subdir = [dataset + base_path + str(movie) + '/posters/' for movie in movies]
     models = [
               VGG16(weights='imagenet', include_top=False),
