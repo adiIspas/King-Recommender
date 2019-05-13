@@ -22,13 +22,11 @@ def get_items_ids():
 
 
 def explore_clusters():
-    batch_size = 40
+    batch_size = 7
 
-    # models = ['vgg16', 'vgg19', 'inception_v3', 'resnet50', 'NASNet']
-    models = ['resnet50']
+    models = ['vgg16', 'vgg19', 'inception_v3', 'resnet50', 'NASNet']
 
     for model in models:
-        # csv_path = './' + model + '-1-posters.csv'
         csv_path = './posters_features/sanity-check/' + model + '-sanity-check.csv'
 
         movie_poster_clusters = pd.DataFrame()
@@ -36,7 +34,7 @@ def explore_clusters():
             final_clusters = pd.Series()
             print('Process cluster', n_clusters)
 
-            k_means = MiniBatchKMeans(n_clusters=n_clusters, batch_size=batch_size, compute_labels=True)
+            k_means = MiniBatchKMeans(n_clusters=n_clusters, batch_size=batch_size, max_iter=300, tol=0.0001)
 
             reader_chunks = pd.read_csv(csv_path, delimiter=',', header=None, chunksize=batch_size)
             for chunk in reader_chunks:
@@ -69,7 +67,7 @@ def explore_clusters():
             cluster_name = 'cluster_' + str(n_clusters)
             movie_poster_clusters[cluster_name] = pd.Series(final_clusters.values, index=movie_poster_clusters.index)
 
-        movie_poster_clusters.to_csv('test-chunk-movies_1_poster_clusters_' + name + '.csv')
+        movie_poster_clusters.to_csv('movies_1_poster_clusters_' + name + '.csv')
 
 
 def main():
