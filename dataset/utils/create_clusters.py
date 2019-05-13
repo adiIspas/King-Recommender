@@ -8,6 +8,8 @@ from sklearn.cluster import KMeans
 
 
 dataset = '../../../king-rec-dataset/ml-latest-small/'
+type_of_features = '1000-movies'
+# type_of_features = 'sanity-check'
 
 
 def get_items_ids():
@@ -32,7 +34,7 @@ def explore_clusters():
 
     for model in models:
         print('Reading data ...')
-        feature_list = np.loadtxt('./posters_features/1000-movies/' + model + '1000-movies_1-posters.csv', delimiter=',')
+        feature_list = np.loadtxt('./posters_features/' + type_of_features + '/' + model + '-sanity-check.csv', delimiter=',')
         print('Complete read data.')
 
         movie_poster_clusters = pd.DataFrame(feature_list[:, :2])
