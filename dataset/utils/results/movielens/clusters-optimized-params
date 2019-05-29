@@ -1,0 +1,107 @@
+==> Optimize with features: ['clusters']   loss: warp   function to optimize: precision_at_k   model: vgg19 ===
+Maximum precision_at_k found: 0.0935
+Optimal parameters:
+epochs: 232
+learning_rate: 0.07171978672352887
+no_components: 42
+item_alpha: 0.006517845577815826
+scaling: 0.016142300018137722
+
+==> Optimize with features: ['clusters']   loss: warp   function to optimize: auc_score   model: vgg19 ===
+Maximum auc_score found: 0.9325
+Optimal parameters:
+epochs: 89
+learning_rate: 0.018841927704689492
+no_components: 139
+item_alpha: 0.0008662511914237855
+scaling: 0.2864763834214625
+
+==> Optimize with features: ['genres', 'clusters']   loss: warp   function to optimize: precision_at_k   model: vgg19 ===
+Maximum precision_at_k found: 0.0995
+Optimal parameters:
+epochs: 218
+learning_rate: 0.12470857345083873
+no_components: 73
+item_alpha: 0.005478316990150038
+scaling: 0.04637764141484815
+
+==> Optimize with features: ['genres', 'clusters']   loss: warp   function to optimize: auc_score   model: vgg19 ===
+Maximum auc_score found: 0.9413
+Optimal parameters:
+epochs: 236
+learning_rate: 0.031860755009764305
+no_components: 139
+item_alpha: 0.0010930770083784052
+scaling: 0.8362665749306415
+
+==> Optimize with features: ['clusters']   loss: warp   function to optimize: precision_at_k   model: inception_v3 ===
+Maximum precision_at_k found: 0.0836
+Optimal parameters:
+epochs: 119
+learning_rate: 0.00852211930222011
+no_components: 192
+item_alpha: 7.276515301192984e-05
+scaling: 0.027052254503857717
+
+==> Optimize with features: ['clusters']   loss: warp   function to optimize: auc_score   model: inception_v3 ===
+Maximum auc_score found: 0.9327
+Optimal parameters:
+epochs: 232
+learning_rate: 0.02981041359364386
+no_components: 84
+item_alpha: 0.004287524090264805
+scaling: 0.040501994149651166
+
+==> Optimize with features: ['genres', 'clusters']   loss: warp   function to optimize: precision_at_k   model: inception_v3 ===
+Maximum precision_at_k found: 0.0905
+Optimal parameters:
+epochs: 245
+learning_rate: 0.028963892665938032
+no_components: 43
+item_alpha: 0.0006238083410955659
+scaling: 0.36579038826022736
+
+==> Optimize with features: ['genres', 'clusters']   loss: warp   function to optimize: auc_score   model: inception_v3 ===
+Maximum auc_score found: 0.9425
+Optimal parameters:
+epochs: 250
+learning_rate: 0.019411170816577752
+no_components: 136
+item_alpha: 0.0008323333176050233
+scaling: 0.4767783602102349
+
+==> Optimize with features: ['clusters']   loss: warp   function to optimize: precision_at_k   model: resnet50 ===
+Maximum precision_at_k found: 0.0953
+Optimal parameters:
+epochs: 88
+learning_rate: 0.07492160698420884
+no_components: 21
+item_alpha: 0.004634987385145838
+scaling: 0.028198967823831238
+
+==> Optimize with features: ['clusters']   loss: warp   function to optimize: auc_score   model: resnet50 ===
+Maximum auc_score found: 0.9342
+Optimal parameters:
+epochs: 198
+learning_rate: 0.016780379637566917
+no_components: 169
+item_alpha: 0.0012939223653296507
+scaling: 0.6692069103186539
+
+==> Optimize with features: ['genres', 'clusters']   loss: warp   function to optimize: precision_at_k   model: resnet50 ===
+Maximum precision_at_k found: 0.0970
+Optimal parameters:
+epochs: 224
+learning_rate: 0.04214027912721876
+no_components: 186
+item_alpha: 0.008676073688466915
+scaling: 0.0024915458462563605
+
+==> Optimize with features: ['genres', 'clusters']   loss: warp   function to optimize: auc_score   model: resnet50 ===
+Maximum auc_score found: 0.9397
+Optimal parameters:
+epochs: 211
+learning_rate: 0.09767064566975311
+no_components: 48
+item_alpha: 0.003428832598553235
+scaling: 0.11239835090728653
