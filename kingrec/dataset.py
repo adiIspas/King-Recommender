@@ -8,7 +8,7 @@ from lightfm.cross_validation import random_train_test_split
 __all__ = ['init_movielens']
 
 
-def init_movielens(path, min_rating=0.0, k=3, item_features=None, cluster_n=18):
+def init_movielens(path, min_rating=0.0, k=3, item_features=None, cluster_n=18, model='vgg19'):
     valid_item_features = {'genres': 'genres', 'clusters': 'clusters'}
     if item_features is not None:
         assert all(item in valid_item_features.values() for item in item_features), \
@@ -88,7 +88,7 @@ def init_movielens(path, min_rating=0.0, k=3, item_features=None, cluster_n=18):
             test_dataset.fit_partial(items=list(movie_genres.keys()))
 
         if valid_item_features.get('clusters') in item_features:
-            movies_posters_clusters, clusters = __init_movies_posters_clusters(path, cluster_n)
+            movies_posters_clusters, clusters = __init_movies_posters_clusters(path, cluster_n, model=model)
             aggregated_features.append(movies_posters_clusters)
 
             train_dataset.fit_partial(item_features=clusters)
@@ -129,11 +129,11 @@ def __init_movies_genres(path):
     return movies_genres, genres
 
 
-def __init_movies_posters_clusters(path, cluster_n):
-    print('Init movies posters clusters ...')
+def __init_movies_posters_clusters(path, cluster_n, model='vgg19'):
+    print('Init movies posters clusters with model:', model)
 
     movie_clusters = dict()
-    movies_posters_clusters = pd.read_csv(path + '/movies_1_poster_clusters_vgg19.csv')
+    movies_posters_clusters = pd.read_csv(path + '/movies_1_poster_clusters_' + model + '.csv')
 
     for index, _ in movies_posters_clusters.iterrows():
         movie_id = int(movies_posters_clusters['0'][index])
@@ -142,7 +142,8 @@ def __init_movies_posters_clusters(path, cluster_n):
         if movie_id not in movie_clusters:
             movie_clusters.update({movie_id: ['cluster_' + str(poster_cluster)]})
         else:
-            movie_clusters.update({movie_id: movie_clusters.get(movie_id).append('cluster_' + str(poster_cluster))})
+            movie_clusters.get(movie_id).append('cluster_' + str(poster_cluster))
+            movie_clusters.update({movie_id: movie_clusters.get(movie_id)})
 
     return movie_clusters, ['cluster_' + str(idx + 1) for idx in range(cluster_n)]
 
