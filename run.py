@@ -35,7 +35,7 @@ item_features = movielens['item_features']
 king_rec = KingRec(no_components=no_components, learning_rate=learning_rate, alpha=alpha, scale=scaling, loss='warp')
 
 model = king_rec.model
-model.fit_partial(train, item_features=item_features, epochs=epochs, verbose=True, num_threads=threads)
+model.fit_partial(interactions=train, item_features=item_features, epochs=epochs, verbose=True, num_threads=threads)
 
 train_precision = precision_at_k(model, train, item_features=item_features, k=k, num_threads=threads).mean()
 test_precision = precision_at_k(model, test, item_features=item_features, k=k, num_threads=threads).mean()
