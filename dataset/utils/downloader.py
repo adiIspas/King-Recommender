@@ -15,10 +15,8 @@ def get_tmdb_posters(tmdb_api_key, max_movie_index=10):
     tmdb_movies_id = get_tmdb_ids()
     download_images(tmdb_api_key, tmdb_movies_id, max_movie_index)
 
-    return tmdb_movies_id
 
-
-def download_images(tmdb_api_key, tmdb_movies_id, max_movie_index=10):
+def download_images(tmdb_api_key, tmdb_movies_id, max_movie_posters=10):
     images = dataset + 'images/'
 
     movie_index = 1
@@ -63,7 +61,7 @@ def download_images(tmdb_api_key, tmdb_movies_id, max_movie_index=10):
             else:
                 print('Status code:', response.status_code, 'on movie', key, '-', value)
 
-        if movie_index == max_movie_index:
+        if movie_index == max_movie_posters:
             break
 
         movie_index += 1
