@@ -11,6 +11,6 @@ def get_movies_data(path):
 
         for row in reader:
             movies\
-                .append(Movie(row[0], row[1], row[2], path + '/images/' + str(row[0]) + '/posters/1.jpg'))
+                .append(Movie(row[0], row[1], str(row[2]).replace('|', ' | '), path + '/images/' + str(row[0]) + '/posters/1.jpg'))
 
     return movies

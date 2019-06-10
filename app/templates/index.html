@@ -2,20 +2,30 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>KingRec App Demo</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.0/js/bootstrap.min.js"></script>
+    <title>KingRec Demo App</title>
 </head>
-<body>
-    <p>Hello, {{ username }}! Here is your top 10 recommendations</p>
-    <table>
-        <tbody>
-        {% for movie in movies %}
-            <tr>
-                <td>{{ movie.title }}</td>
-                <td>{{ movie.genres }}</td>
-                <td>{{ movie.poster }}</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+<body style="background: black">
+<a href="/" style="text-decoration:none;"><h1 style="font-size:3vw; color:red; padding: 30px; padding-left: 40px;">
+    KingRec Demo App</h1></a>
+
+<h3 style="padding-left: 40px; color:white">Top 5 recommendations for you</h3>
+
+<div class="row" style="padding: 30px; margin: 0">
+    {% for movie in movies %}
+        <div class="card col text-white bg-dark mb-3" style="margin: 10px">
+            <img src="./static/images/{{ movie.id }}/posters/1.jpg" class="card-img-top" height="450px" width="350px">
+            <div class="card-body">
+                <h5 class="card-title">{{ movie.title }}</h5>
+                <p class="card-text">{{ movie.genres }}</p>
+                <a href="/like?movie_id={{ movie.id }}" class="btn btn-primary"><i class="fa fa-thumbs-up"></i> Like</a>
+            </div>
+        </div>
+    {% endfor %}
+</div>
 </body>
 </html>
