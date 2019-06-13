@@ -8,7 +8,7 @@ from lightfm.cross_validation import random_train_test_split
 __all__ = ['init_movielens']
 
 
-def init_movielens(path, min_rating=0.0, k=3, item_features=None, cluster_n=18, model='vgg19'):
+def init_movielens(path, min_rating=0.0, k=3, item_features=None, cluster_n=18, model='vgg19', test_percentage=0.2):
     valid_item_features = {'genres': 'genres', 'clusters': 'clusters'}
     if item_features is not None:
         assert all(item in valid_item_features.values() for item in item_features), \

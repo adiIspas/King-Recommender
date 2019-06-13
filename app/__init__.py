@@ -1,1 +1,1 @@
-__all__ = ['init_data', 'movie']
+__all__ = ['init_data', 'init_model', 'movie']
