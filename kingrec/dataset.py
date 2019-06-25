@@ -49,7 +49,7 @@ def init_movielens(path, min_rating=0.0, k=3, item_features=None, cluster_n=18, 
         users_column, items_column, ratings_column = zip(*ratings)
         ratings = sparse.coo_matrix((ratings_column, (users_column, items_column)))
 
-        ratings_train, ratings_test = random_train_test_split(ratings, test_percentage=0.2,
+        ratings_train, ratings_test = random_train_test_split(ratings, test_percentage=test_percentage,
                                                               random_state=np.random.RandomState(7))
 
         ratings_train_to_count = zip(ratings_train.row, ratings_train.col, ratings_train.data)
