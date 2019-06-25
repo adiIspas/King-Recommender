@@ -1,4 +1,5 @@
 import numpy as np
+import random
 
 from flask import Flask, render_template, request
 from app import init_data
@@ -17,15 +18,16 @@ def get_init_model():
 
 @app.route("/")
 def load(movie_id=1):
-    user_id = 1
+    user_id = init_model.user_id
     movies = init_data.get_movies_data(dataset)
 
-    init_model.update_model(user_id=user_id, movie_id_index=movies_ids.index(str(movie_id)))
+    # init_model.update_model(user_id=user_id, movie_id_index=movies_ids.index(str(movie_id)))
+    init_model.update_model(user_id=user_id, movie_id=movie_id)
     scores = init_model.model.predict(user_ids=[user_id], item_ids=np.arange(len(movies_ids)))
     movies_recommended = np.array(movies_ids)[[np.argsort(-scores)]][0:5]
     movies = [movie for movie in movies if movie.id in movies_recommended]
 
-    return render_template('index.html', username='Adi', movies=movies)
+    return render_template('index.html', user_id=user_id, movies=movies)
 
 
 @app.route("/like")
@@ -34,6 +36,13 @@ def select_a_movie():
 
     movie_id = int(request.args.get('movie_id'))
     return load(movie_id)
+
+
+@app.route("/change")
+def change_user():
+    init_model.user_id = random.randrange(1, 609)
+
+    return load()
 
 
 app.jinja_env.globals['select_a_movie'] = select_a_movie

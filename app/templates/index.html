@@ -2,11 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-{# Author of favicon #}
-{#    <div>Icons made by <a href="https://www.freepik.com/" title="Freepik">Freepik</a> from <a#}
-{#            href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by <a#}
-{#            href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0#}
-{#        BY</a></div>#}
+    {# Author of favicon #}
+    {#    <div>Icons made by <a href="https://www.freepik.com/" title="Freepik">Freepik</a> from <a#}
+    {#            href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by <a#}
+    {#            href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0#}
+    {#        BY</a></div>#}
     <link rel="shortcut icon" type="image/png" href="/static/favicon.png"/>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -19,7 +19,16 @@
 <a href="/" style="text-decoration:none;"><h1 style="font-size:3vw; color:red; padding: 30px; padding-left: 40px;">
     KingRec Demo App</h1></a>
 
-<h3 style="padding-left: 40px; color:white">Top 5 recommendations for you</h3>
+<div class="row" style="margin: 0">
+    <div style="width: 100%; display: flex; justify-content: space-between;">
+        <div class="col-xs-10" style="padding-left: 40px;">
+            <h3 style="color:white">Top 5 recommendations for user with id {{ user_id }}</h3>
+        </div>
+        <div class="col-xs-2" style="padding-right: 40px;">
+            <a href="/change" class="btn btn-warning"><i class="fa fa-refresh"></i> Change user</a>
+        </div>
+    </div>
+</div>
 
 <div class="row" style="padding: 30px; margin: 0">
     {% for movie in movies %}

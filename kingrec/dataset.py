@@ -72,6 +72,7 @@ def init_movielens(path, min_rating=0.0, k=3, item_features=None, cluster_n=18, 
 
         data.update({'train': train_interactions})
         data.update({'test': test_interactions})
+        data.update({'train-mapping': train_dataset.mapping()})
 
     # add item features
     if item_features is not None:
