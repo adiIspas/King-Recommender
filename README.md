@@ -10,4 +10,4 @@ The application was developed in Python 3.6 and is based on four libraries: Ligh
 
 From the point of view of results we got an improvement of the precision@k and accuracy metrics. If is used just the movies posters, precision is improvement with 0.42\% and accuracy with 0.32\%. If posters is used together with genres, precision is improvement with 0.82\% and accuracy with 1.09\%.
 
-Paper can be found [here](https://github.com/adiIspas/King-Recommender-Paper).
+The paper can be found [here](https://github.com/adiIspas/King-Recommender-Paper).
